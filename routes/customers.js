@@ -21,7 +21,7 @@ module.exports = server => {
       res.send(customer);
       next();
     } catch (err) {
-      return next(new errors.ResourceNotFoundError(`There is no customer with the id of ${req.params.id}`))
+      return next(new errors.ResourceNotFoundError(`There is no customer with the id of ${req.params.id}`));
     }
   });
 
@@ -49,6 +49,34 @@ module.exports = server => {
       res.send(201);
     } catch (err) {
       return next(new errors.InternalError(err.message));
+    }
+  });
+
+  /* ===== EDIT CUSTOMER ===== */
+  server.put('/customers/:id', async (req, res, next) => {
+    // check for JSON format
+    if (!req.is('application/json')) {
+      return next(new errors.InvalidContentError("Expects 'application/json' "));
+    }
+    const {
+      name,
+      email,
+      balance
+    } = req.body;
+
+    const customer = new Customer({
+      name,
+      email,
+      balance
+    });
+
+    try {
+      const customer = await Customer.findOneAndUpdate({
+        _id: req.params.id
+      }, req.body);
+      res.send(201);
+    } catch (err) {
+      return next(new errors.ResourceNotFoundError(`There is no customer with the id of ${req.params.id}`));
     }
   });
 };
