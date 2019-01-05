@@ -14,6 +14,18 @@ module.exports = server => {
     }
   });
 
+  /* ===== GET SINGLE CUSTOMER ===== */
+  server.get('/customers/:id', async (req, res, next) => {
+    try {
+      const customers = await Customer.findById(req.params.id);
+      res.send(customer);
+      next();
+    } catch (err) {
+      return next(new errors.ResourceNotFoundError(`There is no customer with the id of ${req.params.id}`))
+    }
+  });
+
+
   /* ===== ADD CUSTOMER ===== */
   server.post('/customers', async (req, res, next) => {
     // check for JSON format
