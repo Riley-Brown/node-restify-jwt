@@ -1,11 +1,19 @@
 const restify = require('restify');
 const mongoose = require('mongoose');
 const config = require('./config');
+const rjwt = require('restify-jwt-community');
 
 const server = restify.createServer();
 
 /*===== MIDDLEWARE =====*/
 server.use(restify.plugins.bodyParser());
+
+/* ===== PROTECT ROUTES ===== */
+server.use(rjwt({
+  secret: config.JWT_SECRET
+}).unless({
+  path: ['/auth']
+}))
 
 server.listen(config.PORT, () => {
   mongoose.set('useFindAndModify', false)
